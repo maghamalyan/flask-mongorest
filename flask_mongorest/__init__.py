@@ -3,17 +3,17 @@ from flask_mongorest.methods import Create, BulkUpdate, List
 
 
 class MongoRest(object):
-     def __init__(self, app=None, **kwargs):
-         self.app = None
-         
-         if app is not None:
-             self.init_app(app, config)
-     
-     def init_app(self, app):
-         if not app or not isinstance(app, Flask):
-             raise Exception('Invalid Flask application instance')
-        self.app = app
+    def __init__(self, app=None, **kwargs):
+        self.app = None
         self.url_prefix = kwargs.pop('url_prefix', '')
+         
+        if app is not None:
+            self.init_app(app)
+     
+    def init_app(self, app):
+        if not app or not isinstance(app, Flask):
+            raise Exception('Invalid Flask application instance')
+        self.app = app
         app.register_blueprint(Blueprint(self.url_prefix, __name__, template_folder='templates'))
 
     def register(self, **kwargs):
@@ -25,7 +25,6 @@ class MongoRest(object):
             if not url:
                 document_name = klass.resource.document.__name__.lower()
                 url = '/%s/' % document_name
-
             # Insert the url prefix, if it exists
             if self.url_prefix:
                 url = '%s%s' % (self.url_prefix, url)
@@ -41,4 +40,3 @@ class MongoRest(object):
             return klass
 
         return decorator
-
